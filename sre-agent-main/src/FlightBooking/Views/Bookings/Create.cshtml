@@ -1,0 +1,50 @@
+@model Booking
+@{
+    ViewData["Title"] = "Book a Flight";
+}
+
+<h2>Book a Flight</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="FlightId" class="form-label"></label>
+                <select asp-for="FlightId" asp-items="@ViewBag.Flights" class="form-select">
+                    <option value="">-- Select a Flight --</option>
+                </select>
+                <span asp-validation-for="FlightId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PassengerName" class="form-label"></label>
+                <input asp-for="PassengerName" class="form-control" placeholder="John Doe" />
+                <span asp-validation-for="PassengerName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" type="email" placeholder="john@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label"></label>
+                <input asp-for="Phone" class="form-control" type="tel" placeholder="555-123-4567" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NumberOfSeats" class="form-label"></label>
+                <input asp-for="NumberOfSeats" class="form-control" type="number" min="1" max="10" value="1" />
+                <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg">Confirm Booking</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

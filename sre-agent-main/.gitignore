@@ -1,0 +1,24 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+tfplan
+crash.log
+
+# Deployment artifacts
+deploy.zip
+
+# Azure logs
+web1-logs/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Publish output
+publish/

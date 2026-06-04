@@ -1,0 +1,101 @@
+name: Deploy FlightBooking App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - ".github/workflows/deploy-app.yml"
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: "8.0.x"
+  APP_PROJECT: src/FlightBooking/FlightBooking.csproj
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.APP_PROJECT }}
+
+      - name: Build
+        run: dotnet build ${{ env.APP_PROJECT }} --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.APP_PROJECT }} --configuration Release --output ./publish --no-build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flight-booking-app
+          path: ./publish
+
+  # ──────────────────────────────────────────────
+  # Stage 1: Deploy to DEV (automatic)
+  # ──────────────────────────────────────────────
+  deploy-dev:
+    runs-on: self-hosted
+    needs: build
+    environment: dev
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flight-booking-app
+          path: ./publish
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Dev - Web App 1
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: sre-agent-web1
+          package: ./publish
+
+      - name: Deploy to Dev - Web App 2
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: sre-agent-web2
+          package: ./publish
+
+  # ──────────────────────────────────────────────
+  # Stage 2: Deploy to PROD (requires approval)
+  # ──────────────────────────────────────────────
+  deploy-prod:
+    runs-on: self-hosted
+    needs: deploy-dev
+    environment: prod
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flight-booking-app
+          path: ./publish
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Prod - Web App 1
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: sre-agent-web1
+          package: ./publish
+
+      - name: Deploy to Prod - Web App 2
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: sre-agent-web2
+          package: ./publish

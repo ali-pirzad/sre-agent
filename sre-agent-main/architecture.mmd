@@ -1,0 +1,79 @@
+graph TB
+    subgraph Users["Users & Admin"]
+        U[End Users]
+        A[Admin - alipirzad]
+    end
+
+    subgraph AzureRG["Azure Resource Group: sre-agent-rg (Central US)"]
+        subgraph Compute["Compute"]
+            ASP[App Service Plan B1]
+            W1[Web App 1<br/>sre-agent-web1]
+            W2[Web App 2<br/>sre-agent-web2]
+            MI1[Managed Identity<br/>Web1]
+            MI2[Managed Identity<br/>Web2]
+        end
+
+        subgraph Data["Data"]
+            SQL[SQL Server<br/>sre-agent-sqlserver]
+            DB[(FlightBookingDb<br/>Basic SKU)]
+        end
+
+        subgraph Security["Security"]
+            KV[Key Vault<br/>sre-agent-kv-2026]
+            SEC[Secret: SqlConnectionString]
+        end
+
+        subgraph Monitoring["Monitoring & Alerting"]
+            LAW[Log Analytics Workspace]
+            AI[Application Insights<br/>sre-agent-appinsights]
+            AG[Action Group<br/>Email: alipirzad]
+            
+            subgraph Alerts["Alert Rules (9)"]
+                A1[HTTP 5xx - Web1/Web2]
+                A2[Health Check - Web1/Web2]
+                A3[Response Time - Web1/Web2]
+                A4[SQL Dependency Failures]
+                A5[Service Unavailable - Web1/Web2]
+            end
+        end
+    end
+
+    subgraph SREAgent["Azure SRE Agent (East US 2)"]
+        IP[Incident Platform]
+        RP[Response Plans<br/>5 plans by alert type]
+        KB[Knowledge Base<br/>runbook-sre-agent.md]
+        SK[Skills<br/>SQL Incident / Log Analytics]
+    end
+
+    %% User flows
+    U -->|HTTPS| W1
+    U -->|HTTPS| W2
+    A -->|Portal/CLI| AzureRG
+
+    %% App connections
+    W1 --- MI1
+    W2 --- MI2
+    MI1 -->|Get Secret| KV
+    MI2 -->|Get Secret| KV
+    KV --- SEC
+    SEC -.->|Connection String| SQL
+    W1 -->|EF Core| DB
+    W2 -->|EF Core| DB
+    ASP --- W1
+    ASP --- W2
+    SQL --- DB
+
+    %% Monitoring flows
+    W1 -->|Telemetry| AI
+    W2 -->|Telemetry| AI
+    AI -->|Logs| LAW
+    Alerts -->|Fires| AG
+    AG -->|Email| A
+
+    %% SRE Agent flows
+    Alerts -->|Alert Fired| IP
+    IP -->|Creates Incident| RP
+    RP -->|Consults| KB
+    RP -->|Uses| SK
+    SK -->|az webapp restart<br/>az config set| W1
+    SK -->|az webapp restart<br/>az config set| W2

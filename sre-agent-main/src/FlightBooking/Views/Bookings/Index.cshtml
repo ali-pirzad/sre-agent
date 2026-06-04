@@ -1,0 +1,44 @@
+@model IEnumerable<Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<h2>My Bookings</h2>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No bookings yet. <a asp-action="Create">Book a flight now!</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Confirmation #</th>
+                    <th>Passenger</th>
+                    <th>Flight</th>
+                    <th>Route</th>
+                    <th>Seats</th>
+                    <th>Booked On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td><strong>@booking.ConfirmationNumber</strong></td>
+                        <td>@booking.PassengerName</td>
+                        <td>@booking.Flight?.FlightNumber</td>
+                        <td>@booking.Flight?.DepartureCity → @booking.Flight?.ArrivalCity</td>
+                        <td>@booking.NumberOfSeats</td>
+                        <td>@booking.BookingDate.ToString("MMM dd, yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,47 @@
+@model IEnumerable<Flight>
+@{
+    ViewData["Title"] = "Available Flights";
+}
+
+<div class="hero rounded-3 mb-4 text-center">
+    <h1>Find Your Next Flight</h1>
+    <p class="lead">Browse available flights and book your trip today</p>
+</div>
+
+<h2>Available Flights</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Flight #</th>
+                <th>Airline</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Price</th>
+                <th>Seats</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var flight in Model)
+            {
+                <tr>
+                    <td><strong>@flight.FlightNumber</strong></td>
+                    <td>@flight.Airline</td>
+                    <td>@flight.DepartureCity</td>
+                    <td>@flight.ArrivalCity</td>
+                    <td>@flight.DepartureTime.ToString("MMM dd, yyyy HH:mm")</td>
+                    <td>@flight.ArrivalTime.ToString("MMM dd, yyyy HH:mm")</td>
+                    <td class="text-success fw-bold">$@flight.Price</td>
+                    <td>@flight.AvailableSeats</td>
+                    <td>
+                        <a asp-controller="Bookings" asp-action="Create" asp-route-flightId="@flight.Id"
+                           class="btn btn-sm btn-primary">Book Now</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

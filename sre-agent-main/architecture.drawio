@@ -1,0 +1,183 @@
+<mxfile host="app.diagrams.net" agent="GitHub Copilot">
+  <diagram id="sre-agent-architecture" name="SRE Agent Architecture">
+    <mxGraphModel dx="2046" dy="1106" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" value="SRE Agent Architecture - Flight Booking App" vertex="1">
+          <mxGeometry height="40" width="480" x="500" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rg-container" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=none;verticalAlign=top;fontSize=14;fontStyle=1;arcSize=5;" value="Resource Group: sre-agent-rg (Central US)" vertex="1">
+          <mxGeometry height="820" width="1440" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.mscae.enterprise.users;" value="End Users" vertex="1">
+          <mxGeometry height="37" width="50" x="60" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="asp" parent="1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#D45B07;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.app_mesh" value="App Service Plan&#xa;(B1 - Windows)" vertex="1">
+          <mxGeometry height="48" width="48" x="240" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="web1" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.app_service;" value="sre-agent-web1&#xa;(.NET 8)" vertex="1">
+          <mxGeometry height="50" width="50" x="200" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="web2" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.app_service;" value="sre-agent-web2&#xa;(.NET 8)" vertex="1">
+          <mxGeometry height="50" width="50" x="200" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="mi1" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.managed_identities;" value="Managed&#xa;Identity" vertex="1">
+          <mxGeometry height="40" width="40" x="340" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="mi2" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.managed_identities;" value="Managed&#xa;Identity" vertex="1">
+          <mxGeometry height="40" width="40" x="340" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="kv" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.key_vaults;" value="Key Vault&#xa;sre-agent-kv-2026&#xa;&#xa;Secret:&#xa;SqlConnectionString" vertex="1">
+          <mxGeometry height="50" width="50" x="480" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="sql" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.sql_server;" value="SQL Server&#xa;sre-agent-sqlserver" vertex="1">
+          <mxGeometry height="50" width="50" x="640" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.sql_database;" value="FlightBookingDb&#xa;(Basic SKU)" vertex="1">
+          <mxGeometry height="50" width="50" x="640" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="appinsights" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.application_insights;" value="Application Insights&#xa;sre-agent-appinsights" vertex="1">
+          <mxGeometry height="50" width="50" x="840" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="law" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.log_analytics_workspaces;" value="Log Analytics&#xa;Workspace" vertex="1">
+          <mxGeometry height="50" width="50" x="1000" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=middle;fontSize=10;align=left;spacingLeft=10;" value="Alert Rules (9)&#xa;• HTTP 5xx (Web1/Web2)&#xa;• Health Check (Web1/Web2)&#xa;• Response Time (Web1/Web2)&#xa;• SQL Dependency Failures&#xa;• Service Unavailable (Web1/Web2)" vertex="1">
+          <mxGeometry height="120" width="220" x="730" y="317" as="geometry" />
+        </mxCell>
+        <mxCell id="actiongroup" parent="1" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#0078D4;shape=mxgraph.azure.notification_hubs;" value="Action Group&#xa;Email: alipirzad@microsoft.com" vertex="1">
+          <mxGeometry height="50" width="50" x="1020" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="sre-container" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontSize=14;fontStyle=1;arcSize=5;" value="Azure SRE Agent (East US 2)" vertex="1">
+          <mxGeometry height="240" width="380" x="900" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-platform" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="Incident Platform&#xa;(Azure Monitor Connected)" vertex="1">
+          <mxGeometry height="50" width="160" x="760" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="response-plans" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="Response Plans (5)&#xa;http-5xx | health-check&#xa;sql-dependency | response-time&#xa;service-unavailable" vertex="1">
+          <mxGeometry height="70" width="160" x="760" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="knowledge-base" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" value="Knowledge Base&#xa;runbook-sre-agent.md" vertex="1">
+          <mxGeometry height="50" width="140" x="960" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="skills" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" value="Skills&#xa;• SQL Incident&#xa;• Log Analytics Query" vertex="1">
+          <mxGeometry height="60" width="140" x="960" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-user-web1" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" target="web1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-user-web1-label" connectable="0" parent="conn-user-web1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="HTTPS" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-user-web2" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" target="web2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-user-web2-label" connectable="0" parent="conn-user-web2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="HTTPS" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-web1-mi1" edge="1" parent="1" source="web1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#666666;" target="mi1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-web2-mi2" edge="1" parent="1" source="web2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#666666;" target="mi2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-mi1-kv" edge="1" parent="1" source="mi1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E8750A;strokeWidth=2;" target="kv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-mi1-kv-label" connectable="0" parent="conn-mi1-kv" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Get Secret" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-mi2-kv" edge="1" parent="1" source="mi2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#E8750A;strokeWidth=2;" target="kv">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-mi2-kv-label" connectable="0" parent="conn-mi2-kv" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Get Secret" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-kv-sql" edge="1" parent="1" source="kv" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#0078D4;" target="sql">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-kv-sql-label" connectable="0" parent="conn-kv-sql" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Connection String" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-sql-db" edge="1" parent="1" source="sql" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-web1-ai" edge="1" parent="1" source="web1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#5C2D91;dashed=1;" target="appinsights">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-web1-ai-label" connectable="0" parent="conn-web1-ai" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Telemetry" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-ai-law" edge="1" parent="1" source="appinsights" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" target="law">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-ai-law-label" connectable="0" parent="conn-ai-law" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Logs" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-alerts-ag" edge="1" parent="1" source="alerts-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#CC0000;strokeWidth=2;" target="actiongroup">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-alerts-ag-label" connectable="0" parent="conn-alerts-ag" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#CC0000;" value="Email Alert" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-alerts-sre" edge="1" parent="1" source="alerts-box" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#009900;strokeWidth=2;" target="incident-platform">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-alerts-sre-label" connectable="0" parent="conn-alerts-sre" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#009900;" value="Alert Fired →&#xa;Incident Created" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-ip-rp" edge="1" parent="1" source="incident-platform" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#009900;" target="response-plans">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-rp-kb" edge="1" parent="1" source="response-plans" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#009900;" target="knowledge-base">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-rp-kb-label" connectable="0" parent="conn-rp-kb" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Consults" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-rp-sk" edge="1" parent="1" source="response-plans" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#009900;" target="skills">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conn-rp-sk-label" connectable="0" parent="conn-rp-sk" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;" value="Executes" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-sre-web1" edge="1" parent="1" source="skills" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#CC0000;strokeWidth=2;dashed=1;" target="web1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="730" />
+              <mxPoint x="225" y="730" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="conn-sre-web1-label" connectable="0" parent="conn-sre-web1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#CC0000;" value="Remediate: restart / fix config" vertex="1">
+          <mxGeometry relative="1" x="-0.2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
