@@ -2,8 +2,16 @@ output "web_app_1_url" {
   value = "https://${azurerm_windows_web_app.web1.default_hostname}"
 }
 
+output "web_app_1_name" {
+  value = azurerm_windows_web_app.web1.name
+}
+
 output "web_app_2_url" {
   value = "https://${azurerm_windows_web_app.web2.default_hostname}"
+}
+
+output "web_app_2_name" {
+  value = azurerm_windows_web_app.web2.name
 }
 
 output "sql_server_fqdn" {

@@ -1,11 +1,12 @@
 # SRE Agent - Flight Booking Web Apps
 
-Two Azure Web Apps (`sre-agent-web1` and `sre-agent-web2`) running a .NET 8 flight booking application backed by Azure SQL Database.
+Two Azure Web Apps running a .NET 8 flight booking application backed by Azure SQL Database. Globally scoped resource names receive a deterministic suffix derived from the Azure subscription ID.
 
 ## Architecture
 
 - **2x Azure Web Apps** (Windows, B1 plan) in `centralus`
 - **Azure SQL Database** (Basic tier) shared by both apps
+- **Azure Key Vault** using purge protection and Azure RBAC; public network access is enabled for testing
 - **No Front Door** - direct access to web apps
 
 ## Project Structure
@@ -65,8 +66,8 @@ Or manually:
 cd src/FlightBooking
 dotnet publish -c Release -o ./publish
 # Then deploy the publish folder to both web apps via Azure CLI:
-az webapp deploy --resource-group sre-agent-rg --name sre-agent-web1 --src-path ./publish.zip --type zip
-az webapp deploy --resource-group sre-agent-rg --name sre-agent-web2 --src-path ./publish.zip --type zip
+az webapp deploy --resource-group sre-agent-rg --name $(terraform -chdir=terraform output -raw web_app_1_name) --src-path ./publish.zip --type zip
+az webapp deploy --resource-group sre-agent-rg --name $(terraform -chdir=terraform output -raw web_app_2_name) --src-path ./publish.zip --type zip
 ```
 
 ## Application Features

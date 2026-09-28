@@ -18,24 +18,28 @@ provider "azurerm" {
 
 data "azurerm_client_config" "current" {}
 
+locals {
+  unique_suffix = substr(replace(data.azurerm_client_config.current.subscription_id, "-", ""), -6, 6)
+  common_tags = {
+    SecurityControl = "Ignore"
+  }
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
+  tags     = local.common_tags
 }
 
 # SQL Server
 resource "azurerm_mssql_server" "sql" {
-  name                         = var.sql_server_name
+  name                         = "${var.sql_server_name}-${local.unique_suffix}"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
   administrator_login          = var.sql_admin_username
   administrator_login_password = var.sql_admin_password
-
-  azuread_administrator {
-    login_username = "sre-agent-sql-admins"
-    object_id      = "596c0966-817b-463d-ab64-26a0ca7e83fb"
-  }
+  tags                         = local.common_tags
 }
 
 # SQL Database
@@ -43,6 +47,7 @@ resource "azurerm_mssql_database" "db" {
   name      = var.sql_database_name
   server_id = azurerm_mssql_server.sql.id
   sku_name  = "Basic"
+  tags      = local.common_tags
 }
 
 # Allow Azure services to access SQL Server
@@ -55,21 +60,22 @@ resource "azurerm_mssql_firewall_rule" "allow_azure" {
 
 # Key Vault
 resource "azurerm_key_vault" "kv" {
-  name                       = "sre-agent-kv-2026"
-  location                   = azurerm_resource_group.rg.location
-  resource_group_name        = azurerm_resource_group.rg.name
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
-  sku_name                   = "standard"
-  soft_delete_retention_days = 7
-  purge_protection_enabled   = false
+  name                          = "sre-agent-kv-${local.unique_suffix}"
+  location                      = azurerm_resource_group.rg.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  sku_name                      = "standard"
+  soft_delete_retention_days    = 7
+  purge_protection_enabled      = true
+  enable_rbac_authorization     = true
+  public_network_access_enabled = true
+  tags                          = local.common_tags
+}
 
-  # Access policy for the deployer (Terraform)
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    secret_permissions = ["Get", "List", "Set", "Delete", "Purge"]
-  }
+resource "azurerm_role_assignment" "deployer_key_vault_secrets_officer" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 # Store SQL connection string in Key Vault
@@ -77,6 +83,8 @@ resource "azurerm_key_vault_secret" "sql_connection" {
   name         = "SqlConnectionString"
   value        = "Server=tcp:${azurerm_mssql_server.sql.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_mssql_database.db.name};Persist Security Info=False;User ID=${var.sql_admin_username};Password=${var.sql_admin_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   key_vault_id = azurerm_key_vault.kv.id
+
+  depends_on = [azurerm_role_assignment.deployer_key_vault_secrets_officer]
 }
 
 # App Service Plan
@@ -86,14 +94,16 @@ resource "azurerm_service_plan" "plan" {
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
   sku_name            = "B1"
+  tags                = local.common_tags
 }
 
 # Web App 1
 resource "azurerm_windows_web_app" "web1" {
-  name                = "sre-agent-web1"
+  name                = "sre-agent-web1-${local.unique_suffix}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   service_plan_id     = azurerm_service_plan.plan.id
+  tags                = local.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -113,27 +123,27 @@ resource "azurerm_windows_web_app" "web1" {
   }
 
   app_settings = {
-    "ASPNETCORE_ENVIRONMENT"                       = "Production"
-    "APPLICATIONINSIGHTS_CONNECTION_STRING"         = azurerm_application_insights.appinsights.connection_string
-    "ApplicationInsightsAgent_EXTENSION_VERSION"    = "~3"
+    "ASPNETCORE_ENVIRONMENT"                     = "Production"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.appinsights.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
   }
 }
 
-# Key Vault access policy for Web App 1
-resource "azurerm_key_vault_access_policy" "web1" {
-  key_vault_id = azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_web_app.web1.identity[0].principal_id
-
-  secret_permissions = ["Get"]
+# Allow Web App 1 to resolve Key Vault secret references
+resource "azurerm_role_assignment" "web1_key_vault_secrets_user" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_windows_web_app.web1.identity[0].principal_id
+  principal_type       = "ServicePrincipal"
 }
 
 # Web App 2
 resource "azurerm_windows_web_app" "web2" {
-  name                = "sre-agent-web2"
+  name                = "sre-agent-web2-${local.unique_suffix}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   service_plan_id     = azurerm_service_plan.plan.id
+  tags                = local.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -153,19 +163,18 @@ resource "azurerm_windows_web_app" "web2" {
   }
 
   app_settings = {
-    "ASPNETCORE_ENVIRONMENT"                       = "Production"
-    "APPLICATIONINSIGHTS_CONNECTION_STRING"         = azurerm_application_insights.appinsights.connection_string
-    "ApplicationInsightsAgent_EXTENSION_VERSION"    = "~3"
+    "ASPNETCORE_ENVIRONMENT"                     = "Production"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.appinsights.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
   }
 }
 
-# Key Vault access policy for Web App 2
-resource "azurerm_key_vault_access_policy" "web2" {
-  key_vault_id = azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_windows_web_app.web2.identity[0].principal_id
-
-  secret_permissions = ["Get"]
+# Allow Web App 2 to resolve Key Vault secret references
+resource "azurerm_role_assignment" "web2_key_vault_secrets_user" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_windows_web_app.web2.identity[0].principal_id
+  principal_type       = "ServicePrincipal"
 }
 
 # ============================================================
@@ -179,6 +188,7 @@ resource "azurerm_log_analytics_workspace" "law" {
   location            = azurerm_resource_group.rg.location
   sku                 = "PerGB2018"
   retention_in_days   = 30
+  tags                = local.common_tags
 }
 
 # Application Insights
@@ -188,6 +198,7 @@ resource "azurerm_application_insights" "appinsights" {
   location            = azurerm_resource_group.rg.location
   workspace_id        = azurerm_log_analytics_workspace.law.id
   application_type    = "web"
+  tags                = local.common_tags
 }
 
 # Action Group - will be connected to SRE Agent via Incident Platform
@@ -196,6 +207,7 @@ resource "azurerm_monitor_action_group" "sre_agent" {
   resource_group_name = azurerm_resource_group.rg.name
   short_name          = "SREAgent"
   enabled             = true
+  tags                = local.common_tags
 
   email_receiver {
     name          = "admin-email"
@@ -213,6 +225,7 @@ resource "azurerm_monitor_metric_alert" "web1_http_5xx" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -237,6 +250,7 @@ resource "azurerm_monitor_metric_alert" "web2_http_5xx" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -261,6 +275,7 @@ resource "azurerm_monitor_metric_alert" "web1_health" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -285,6 +300,7 @@ resource "azurerm_monitor_metric_alert" "web2_health" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -309,6 +325,7 @@ resource "azurerm_monitor_metric_alert" "web1_response_time" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -333,6 +350,7 @@ resource "azurerm_monitor_metric_alert" "web2_response_time" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -357,6 +375,7 @@ resource "azurerm_monitor_metric_alert" "sql_connection_failures" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Insights/components"
@@ -387,6 +406,7 @@ resource "azurerm_monitor_metric_alert" "web1_503" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
@@ -410,6 +430,7 @@ resource "azurerm_monitor_metric_alert" "web2_503" {
   enabled             = false
   frequency           = "PT1M"
   window_size         = "PT5M"
+  tags                = local.common_tags
 
   criteria {
     metric_namespace = "Microsoft.Web/sites"
