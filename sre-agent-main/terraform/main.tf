@@ -222,7 +222,7 @@ resource "azurerm_monitor_metric_alert" "web1_http_5xx" {
   scopes              = [azurerm_windows_web_app.web1.id]
   description         = "Alert when web1 returns HTTP 5xx errors"
   severity            = 1
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -247,7 +247,7 @@ resource "azurerm_monitor_metric_alert" "web2_http_5xx" {
   scopes              = [azurerm_windows_web_app.web2.id]
   description         = "Alert when web2 returns HTTP 5xx errors"
   severity            = 1
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -272,7 +272,7 @@ resource "azurerm_monitor_metric_alert" "web1_health" {
   scopes              = [azurerm_windows_web_app.web1.id]
   description         = "Alert when web1 health check fails (app down)"
   severity            = 0
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -297,7 +297,7 @@ resource "azurerm_monitor_metric_alert" "web2_health" {
   scopes              = [azurerm_windows_web_app.web2.id]
   description         = "Alert when web2 health check fails (app down)"
   severity            = 0
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -322,7 +322,7 @@ resource "azurerm_monitor_metric_alert" "web1_response_time" {
   scopes              = [azurerm_windows_web_app.web1.id]
   description         = "Alert when web1 average response time exceeds 5 seconds"
   severity            = 2
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -347,7 +347,7 @@ resource "azurerm_monitor_metric_alert" "web2_response_time" {
   scopes              = [azurerm_windows_web_app.web2.id]
   description         = "Alert when web2 average response time exceeds 5 seconds"
   severity            = 2
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -372,7 +372,7 @@ resource "azurerm_monitor_metric_alert" "sql_connection_failures" {
   scopes              = [azurerm_application_insights.appinsights.id]
   description         = "Alert when SQL dependency calls fail"
   severity            = 1
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -403,7 +403,7 @@ resource "azurerm_monitor_metric_alert" "web1_503" {
   scopes              = [azurerm_windows_web_app.web1.id]
   description         = "Alert when web1 stops responding (0 requests = app down)"
   severity            = 0
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
@@ -427,7 +427,7 @@ resource "azurerm_monitor_metric_alert" "web2_503" {
   scopes              = [azurerm_windows_web_app.web2.id]
   description         = "Alert when web2 stops responding (0 requests = app down)"
   severity            = 0
-  enabled             = false
+  enabled             = true
   frequency           = "PT1M"
   window_size         = "PT5M"
   tags                = local.common_tags
